@@ -12,13 +12,13 @@
         <f7-pages>
           <f7-page>
             <f7-list>
-              <f7-list-item title="Hồ sơ của tôi" :link="'/my-profile/' + getId()" link-close-panel link-view="#main-view"><f7-icon slot="media" f7="person"></f7-icon></f7-list-item>                    
-              <f7-list-item v-if="isCompany" link="/list-worker/" title="Danh sách công nhân" link-close-panel link-view="#main-view"><f7-icon slot="media" f7="persons"></f7-icon></f7-list-item>
-              <f7-list-item v-if="!isCompany" link="/timeline/" title="Danh sách công việc" link-close-panel link-view="#main-view"><f7-icon slot="media" f7="timeline"></f7-icon></f7-list-item>
+              <f7-list-item title="プロフィール" :link="'/my-profile/' + getId()" link-close-panel link-view="#main-view"><f7-icon slot="media" f7="person"></f7-icon></f7-list-item>                    
+              <f7-list-item v-if="isCompany" link="/list-worker/" title="従業員リスト" link-close-panel link-view="#main-view"><f7-icon slot="media" f7="persons"></f7-icon></f7-list-item>
+              <f7-list-item v-if="!isCompany" link="/timeline/" title="仕事項目" link-close-panel link-view="#main-view"><f7-icon slot="media" f7="timeline"></f7-icon></f7-list-item>
 <!--               <f7-list-item link="/notification/" title="Notification" link-view="#main-view" link-close-panel><f7-icon slot="media" f7="bell"></f7-icon><f7-badge color="red">5</f7-badge></f7-list-item> -->
-              <f7-list-item v-if="isCompany" link="/form/" title="Help Request" link-view="#main-view" link-close-panel><f7-icon slot="media" f7="help"></f7-icon></f7-list-item>
+              <f7-list-item v-if="isCompany" link="/form/" title="ヘルプリクエイスト" link-view="#main-view" link-close-panel><f7-icon slot="media" f7="help"></f7-icon></f7-list-item>
               <f7-list-item link="/about/" title="Thông tin ứng dụng" link-view="#main-view" link-close-panel><f7-icon slot="media" f7="info"></f7-icon></f7-list-item>
-              <f7-list-item link="/#/" link-open-login-screen="#logmein" @click="signOut()" title="Đăng xuất" link-view="#main-view" link-close-panel id="logmeout"><f7-icon slot="media" f7="logout"></f7-icon></f7-list-item>
+              <f7-list-item link="/#/" link-open-login-screen="#logmein" @click="signOut()" title="ログアウト" link-view="#main-view" link-close-panel id="logmeout"><f7-icon slot="media" f7="logout"></f7-icon></f7-list-item>
             </f7-list>
           </f7-page>
         </f7-pages>
@@ -39,21 +39,25 @@
           <f7-page>
             <f7-block>
               <div style="text-align: center;">
-                <img src="./img/pic.jpg" style="border-radius: 50%; max-width:150px; border: 4px solid #11B771" alt="">
+                <img src="./img/pic.jpg" style="max-height:150px; max-width:150px; border: 4px solid #11B771" alt="">
               </div>
             </f7-block>
             <f7-grid>
               <f7-col width="50" tablet-width="50" class="homeblock" style="text-align:center" no-gutter>
-               <f7-link :href="'/my-profile/' + getId()" class="color-black">
-                  <f7-icon if-ios="f7:person" if-material="material:person" size="50px"></f7-icon>
-                 <div class="icon-name">Hồ sơ cá nhân</div>
-               </f7-link>
+               <div class="item-homeblock">
+                  <f7-link :href="'/my-profile/' + getId()" class="color-black">
+                    <f7-icon if-ios="f7:person" if-material="material:person" size="50px"></f7-icon>
+                   <div class="icon-name">プロフィール</div>
+                  </f7-link>
+               </div>
               </f7-col>
               <f7-col width="50" tablet-width="50" class="homeblock" style="text-align:center" no-gutter>
-               <f7-link color="black" href="/timeline/">
-                  <f7-icon if-ios="f7:timeline" if-material="material:timeline" size="50px"></f7-icon>
-                  <div class="icon-name">Danh sách công việc</div>
-               </f7-link>
+                <div class="item-homeblock">
+                  <f7-link color="black" href="/timeline/">
+                      <f7-icon if-ios="f7:timeline" if-material="material:timeline" size="50px"></f7-icon>
+                      <div class="icon-name">仕事項目</div>
+                   </f7-link>
+                </div>
               </f7-col>
             </f7-grid>
             <f7-grid>
@@ -64,16 +68,20 @@
                 </f7-link>
               </f7-col> -->
               <f7-col width="50" tablet-width="50" class="homeblock" style="text-align:center" no-gutter>
-                <f7-link href="/about/" color="black">
+                <div class="item-homeblock">
+                  <f7-link href="/about/" color="black">
                   <f7-icon if-ios="f7:info" if-material="material:info" size="50px"></f7-icon>
-                <div class="icon-name">Thông tin ứng dụng</div>
-                </f7-link>
+                  <div class="icon-name">Thông tin ứng dụng</div>
+                  </f7-link>
+                </div>
               </f7-col>
               <f7-col width="50" tablet-width="50" class="homeblock" style="text-align:center" no-gutter>
-                <f7-link color="black" open-login-screen="#logmein" @click="signOut()">
+                <div class="item-homeblock">
+                  <f7-link color="black" open-login-screen="#logmein" @click="signOut()">
                   <f7-icon if-ios="f7:logout" if-material="material:logout" size="50px"></f7-icon>
-                  <div class="icon-name">Đăng xuất</div>
+                  <div class="icon-name">ログアウト</div>
                 </f7-link>
+                </div>
               </f7-col>
             </f7-grid>
           </f7-page>
@@ -85,23 +93,23 @@
       <f7-view>
         <f7-pages>
           <f7-page login-screen>
-            <f7-login-screen-title class="color-blue">LOGIN</f7-login-screen-title>
+            <f7-login-screen-title class="color-blue">ログイン</f7-login-screen-title>
             <f7-block style="padding:0 10px;">
                 <f7-block style="text-align: center">
-                  <img src="./img/blue-location-icon-png-19.png" style="margin-top: 20%; max-width: 150px;" alt="">
+                  <img src="./img/letter-A-256.png" style="margin-top: 20%; max-width: 150px;" alt="">
                 </f7-block>
                 <f7-list form>
                   <f7-list-item>
                     <f7-icon slot="media" f7="person"></f7-icon>
-                    <f7-input name="username" id="login-email" placeholder="Email" type="text"></f7-input>
+                    <f7-input name="username" id="login-email" placeholder="eメール" type="text"></f7-input>
                   </f7-list-item>
                   <f7-list-item>
                     <f7-icon slot="media" f7="lock"></f7-icon>
-                    <f7-input name="password" id="login-password" type="password" placeholder="Password"></f7-input>
+                    <f7-input name="password" id="login-password" type="password" placeholder="パスワード"></f7-input>
                   </f7-list-item>
                    <f7-list-item class="small" checkbox name="my-checkbox" value="1" title="Remember Me"></f7-list-item>
                 </f7-list>
-                <f7-button id="login-btn" @click="signIn()" raised round fill big >Login</f7-button>
+                <f7-button id="login-btn" @click="signIn()" raised round fill big >ログイン</f7-button>
               </f7-block>
           </f7-page>
         </f7-pages>
@@ -139,6 +147,9 @@ export default{
             localStorage.setItem('type', res.body.results.type);
             if(localStorage.getItem('type') == 3){
               this.isCompany = false;
+            }
+            if(localStorage.getItem('type') == 1){
+              this.isCompany = true;
             }
             self.$f7.views.main.router.refreshPage();
             myApp.closeModal();
@@ -187,9 +198,28 @@ export default{
 </script>
 <style scoped>
   .row{
-    margin: 20% 0;
+    margin: 5% 10px;
+
+  }
+  .homeblock{
+  }
+  .item-homeblock{
+    margin: 0 auto;
+    max-width: 140px;
+    background-color: white;
+    padding: 30px 0;
+    border-radius: 8%;
   }
   .small{
     font-size:14px;
+    text-align: center;
+    padding-left: 15%;
+  }
+  .small .item-title{
+    text-align: center;
+    padding:0 30px;
+  }
+  .label-checkbox{
+    text-align: center;
   }
 </style>

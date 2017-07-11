@@ -12,7 +12,7 @@
           v-for="worker in workers"
           :title="worker.name"
 			    v-bind:link="'/worker/' + worker.id+ '/'"
-			    subtitle="Worker"
+			    subtitle="従業員"
 			  >
 			</f7-list-item>
       </f7-list>
@@ -21,43 +21,50 @@
               <f7-list-item>
                <div>
                   <label for="">Email: </label>
-                  <f7-input name="email" type="text"/>
+                  <f7-input name="email" v-model="email" v-validate="'required|email'" type="text"/>
+                  <span v-show="errors.has('email')">{{ errors.first('email') }}</span>
                </div>
               </f7-list-item>
               <f7-list-item>
                <div>
                   <label for="">Name: </label>
-                  <f7-input name="name" type="text"/>
+                  <f7-input name="name" v-model="name" v-validate="'required'" type="text"/>
+                  <span v-show="errors.has('name')">{{ errors.first('name') }}</span>
                </div>
               </f7-list-item>
                <f7-list-item>
                <div>
                   <label for="">Japanese Name: </label>
-                  <f7-input name="jname" type="text" />
+                  <f7-input name="jname" v-model="jname" v-validate="'required'" type="text" />
+                  <span v-show="errors.has('jname')">{{ errors.first('jname') }}</span>
                </div>
               </f7-list-item>
               <f7-list-item>
                <div>
                   <label for="">Birthday: </label>
-                  <f7-input name="birthday" type="text"/>
+                  <f7-input name="birthday" v-model="birthday" v-validate="'required'" type="text"/>
+                  <span v-show="errors.has('birthday')">{{ errors.first('birthday') }}</span>
                </div>
               </f7-list-item>
               <f7-list-item>
                <div>
                   <label for="">Address: </label>
-                  <f7-input name="address" type="text"/>
+                  <f7-input name="address" v-model="address" v-validate="'required'" type="text"/>
+                  <span v-show="errors.has('address')">{{ errors.first('address') }}</span>
                </div>
               </f7-list-item>
               <f7-list-item>
                <div>
                   <label for="">Passport: </label>
-                  <f7-input name="passport" type="text" />
+                  <f7-input name="passport" v-model="passport" v-validate="'required'" type="text" />
+                  <span v-show="errors.has('passport')">{{ errors.first('passport') }}</span>
                </div>
               </f7-list-item>
               <f7-list-item>
                <div>
                   <label for="">Company: </label>
-                  <f7-input name="company" type="text" />
+                  <f7-input name="company" v-model="company" v-validate="'required'" type="text" />
+                  <span v-show="errors.has('company')">{{ errors.first('company') }}</span>
                </div>
               </f7-list-item>
               <f7-list-item>
@@ -70,13 +77,15 @@
               <f7-list-item>
                <div>
                   <label for="">Facebook: </label>
-                  <f7-input name="facebook" type="text" />
+                  <f7-input name="facebook" v-model="facebook" v-validate="'required'" type="text" />
+                  <span v-show="errors.has('facebook')">{{ errors.first('facebook') }}</span>
                </div>
               </f7-list-item>
               <f7-list-item>
                <div>
                   <label for="">Started Working: </label>
-                  <f7-input name="start" type="text" />
+                  <f7-input name="start" v-model="start" v-validate="'required'" type="text" />
+                  <span v-show="errors.has('start')">{{ errors.first('start') }}</span>
                </div>
               </f7-list-item>
             </f7-list>
@@ -94,7 +103,17 @@
  	export default{
  		data: function(){
     return{
-       workers: []
+       workers: [],
+       email:'',
+       name:'',
+       jname:'',
+       birthday:'',
+       address:'',
+       passport:'',
+       company:'',
+       gender:'',
+       facebook:'',
+       start:''
       }
     },
     methods: {
@@ -121,30 +140,40 @@
       },
       submit(){
         var self = this;
-        var formData = myApp.formToData('#my-form');
-        this.$http.post(cf.serverURL + 'create-user',
-          {
-            email: formData.email,
-            name: formData.name,
-            name_jp: formData.jname,
-            birthday: formData.birthday,
-            address: formData.address,
-            number_passport: formData.passport,
-            company: formData.company,
-            sex: formData.gender,
-            facebook: formData.facebook,
-            date_start: formData.start,
-            created_by: localStorage.getItem('id'),
-            token: localStorage.getItem('token')
-          }
-        ).then(
-          function(res){
-            self.$f7.views.main.router.refreshPage();
-            myApp.closeModal('#demo-popup');
-            self.$f7.alert("Created Successfully","Create User");
-          },
-          function(res){
-            console.log(res);
+        this.$validator.validateAll().then(
+          function(result){
+            if(result){
+              var formData = myApp.formToData('#my-form');
+              self.$http.post(cf.serverURL + 'create-user',
+                {
+                  email: formData.email,
+                  name: formData.name,
+                  name_jp: formData.jname,
+                  birthday: formData.birthday,
+                  address: formData.address,
+                  number_passport: formData.passport,
+                  company: formData.company,
+                  sex: formData.gender,
+                  facebook: formData.facebook,
+                  date_start: formData.start,
+                  created_by: localStorage.getItem('id'),
+                  token: localStorage.getItem('token')
+                }
+              ).then(
+                function(res){
+                  self.$f7.views.main.router.refreshPage();
+                  myApp.closeModal('#demo-popup');
+                  self.$f7.alert("Created Successfully","Create User");
+                },
+                function(res){
+                  console.log(res);
+                }
+              )
+            }
+            else{
+              self.$f7.alert("Correct them all!","Error Validated");
+              return false;
+            }
           }
         )
       },

@@ -1,6 +1,6 @@
 <template>
   <f7-page>
-    <f7-navbar back-link="Back" title="Danh sách công việc" sliding>
+    <f7-navbar back-link="Back" title="仕事項目" sliding>
     </f7-navbar>
       <f7-fab @click="addTimeline()" >
         <f7-icon f7="add"></f7-icon>
@@ -8,25 +8,46 @@
     <f7-grid>
       <f7-col width="25" style="text-align:center" no-gutter>
         <f7-icon if-ios="f7:circle_fill" if-material="material:circle_fill" size="15px" color="white"></f7-icon>
-        <div class="icon-name">Chờ duyệt</div> 
+        <div class="icon-name">待機中</div> 
       </f7-col>
       <f7-col width="25" style="text-align:center" no-gutter>
         <f7-icon if-ios="f7:circle_fill" if-material="material:circle_fill" size="15px" color="blue"></f7-icon>
-        <div class="icon-name">Đang làm</div> 
+        <div class="icon-name">実施中</div> 
       </f7-col>
       <f7-col width="25" style="text-align:center" no-gutter>
         <f7-icon if-ios="f7:circle_fill" if-material="material:circle_fill" size="15px" color="green"></f7-icon>
-        <div class="icon-name">Đã xong</div> 
+        <div class="icon-name">終了</div> 
       </f7-col>
       <f7-col width="25" style="text-align:center" no-gutter>
         <f7-icon if-ios="f7:circle_fill" if-material="material:circle_fill" size="15px" color="red"></f7-icon>
-        <div class="icon-name">Quá hạn</div> 
+        <div class="icon-name">期限オーバー</div> 
       </f7-col>
     </f7-grid>
-    <f7-timeline sides>
-      <f7-timeline-item :day="event.start"
+    <f7-timeline sides >
+        <div class="timeline-item" v-for="event in events">
+          <div class="timeline-item-date">{{event.start}} <small>/{{event.month}}</small></div>
+          <div class="timeline-item-divider"></div>
+          <div class="timeline-item-content">
+          <div class="timeline-item-time">{{event.hour}}:{{event.minute}}</div>
+          <div class="timeline-item-title">{{event.title}}</div>
+            <div class="timeline-item">
+              <!-- <div class="timeline-item-subtitle">{{event.note}}</div>
+              <div class="timeline-item-text">{{event.content}}</div> -->
+              <f7-list inset>
+                <f7-list-item :link="'/detail-task/'+event.id" :id="'event' + event.id" :class="'color-white ' + event.class">
+                  <f7-timeline-item-child 
+                    :subtitle="event.note"
+                    :text="event.content">
+                
+                  </f7-timeline-item-child>
+                </f7-list-item>
+              </f7-list>
+            </div>
+          </div>
+        </div>
+     <!--  <f7-timeline-item :day="event.start"
         v-for="event in events"
-        month="sdf"
+        :month="event.month"
         :time="event.hour + ':' + event.minute"
         :title="event.title"
       >
@@ -39,43 +60,46 @@
         </f7-timeline-item-child>
           </f7-list-item>
         </f7-list>
-      </f7-timeline-item>
+      </f7-timeline-item> -->
     </f7-timeline>
     <f7-popup id="demo-popup" no-navbar>
          <f7-list form id="my-form">
         <f7-list-item>
          <div>
-            <label for="">Tiêu đề: </label>
-            <f7-input name="title" type="text"/>
+            <label for="">タイトル: </label>
+             <f7-input name="title" v-model="title" v-validate="'required'" type="text"/>
+            <span v-show="errors.has('title')">{{ errors.first('title') }}</span>
          </div>
         </f7-list-item>
         <f7-list-item>
          <div>
-            <label for="">Nội dung: </label>
-            <f7-input name="content" type="text"/>
+            <label for="">内容: </label>
+            <f7-input name="content" v-model="content" v-validate="'required'" type="text"/>
+            <span v-show="errors.has('content')">{{ errors.first('content') }}</span>
          </div>
         </f7-list-item>
         <f7-list-item>
          <div>
-            <label for="">Lưu ý </label>
-            <f7-input name="note" type="text" />
+            <label for="">備考: </label>
+            <f7-input name="note" v-model="note" v-validate="'required'" type="text" />
+            <span v-show="errors.has('note')">{{ errors.first('note') }}</span>
          </div>
         </f7-list-item>
         <f7-list-item>
          <div>
-            <label for="">Ngày bắt đầu </label>
+            <label for="">開始時間: </label>
             <f7-input name="start" type="text" placeholder="Date Time" readonly id="picker-date1"></f7-input>
          </div>
         </f7-list-item>
         <f7-list-item>
          <div>
-            <label for="">Ngày kết thúc </label>
+            <label for="">終了時間: </label>
             <f7-input name="end" type="text" placeholder="Date Time" readonly id="picker-date2"/>
          </div>
         </f7-list-item>
         <f7-buttons >
-                <f7-button big fill class="button col-50" close-popup color="blue">Cancel</f7-button>
-                <f7-button big fill class="button col-50" @click="createTask()" color="green">Confirm</f7-button>
+                <f7-button big fill class="button col-50" close-popup color="blue">キャンセル</f7-button>
+                <f7-button big fill class="button col-50" @click="createTask()" color="green">確認</f7-button>
             </f7-buttons>
       </f7-list>
     </f7-popup>
@@ -89,7 +113,9 @@ import {cf} from './../../main.js'
     data: function(){
       return{
         events: [],
-        pickerID: 1
+        title: '',
+        note: '',
+        content: ''
       }
     },
     methods: {
@@ -104,9 +130,10 @@ import {cf} from './../../main.js'
           timeout: 15000
         }).then(
           function(res){
-            this.events = res.body.results;
+            // self.events = res.body.results;
+            // console.log(self.events);
             var now = new Date();
-            $$.each(this.events, function(value, key){
+            $$.each(res.body.results, function(value, key){
               var n = new Date(key.date_start);
               var e = new Date(key.date_end);
               key.start = n.getDate();
@@ -204,28 +231,36 @@ import {cf} from './../../main.js'
       },
       createTask(){
         var self = this;
-        var formData = myApp.formToData("#my-form");
-        console.log(formData);
-        this.$http.post(cf.serverURL + 'create-work-list',
-          {
-            user_id: localStorage.getItem('id'),
-            title: formData.title,
-            content: formData.content,
-            note: formData.note,
-            date_start: formData.start,
-            date_end: formData.end,
-            created_by: localStorage.getItem('id'),
-            token: localStorage.getItem('token')
+        this.$validator.validateAll().then(function(result){
+          if(result){
+            var formData = myApp.formToData("#my-form");
+            self.$http.post(cf.serverURL + 'create-work-list',
+              {
+                user_id: localStorage.getItem('id'),
+                title: formData.title,
+                content: formData.content,
+                note: formData.note,
+                date_start: formData.start,
+                date_end: formData.end,
+                created_by: localStorage.getItem('id'),
+                token: localStorage.getItem('token')
+              }
+            ).then(
+              function(res){
+                self.$f7.views.main.router.refreshPage();
+                myApp.closeModal('#demo-popup');
+                self.$f7.alert("Created Successfully","Create Task");
+              },
+              function(res){
+                console.log(res);
+              })
           }
-        ).then(
-          function(res){
-            self.$f7.views.main.router.refreshPage();
-            myApp.closeModal('#demo-popup');
-            self.$f7.alert("Created Successfully","Create Task");
-          },
-          function(res){
-            console.log(res);
-          })
+          else{
+             self.$f7.alert("Correct them all","Error Validated");
+            return false;
+          }
+        })
+        
       }
     },
     created: function(){

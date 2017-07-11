@@ -11,7 +11,7 @@
               <h1 class="color-blue">{{worker.name}}</h1>
             </div>
           </f7-block>
-          <f7-block-title>Basic Information</f7-block-title>
+          <f7-block-title>概要情報</f7-block-title>
           <f7-list>
               <f7-list-item>
                   <a href="tel:900" class="external">900</a>
@@ -26,7 +26,7 @@
               </f7-list-item>
           </f7-list>
           <f7-list>
-              <f7-list-item :link="'/task/' + worker.id" title="Kiểm tra tiến độ công việc">
+              <f7-list-item :link="'/task/' + worker.id" title="進捗状況">
                   <f7-icon f7="favorites" class="color-blue" slot="media"></f7-icon>
               </f7-list-item>
           </f7-list>

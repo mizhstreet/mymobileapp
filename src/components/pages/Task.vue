@@ -6,10 +6,10 @@
               </f7-nav-right>
           </f7-navbar>
           <f7-toolbar tabbar labels>
-              <f7-link tab-link="#tab1" class="active"><f7-icon f7="timeline"></f7-icon>Waiting</f7-link>
-              <f7-link tab-link="#tab2"><f7-icon f7="reload"></f7-icon>Doing</f7-link>
-              <f7-link tab-link="#tab3"><f7-icon f7="check"></f7-icon>Done</f7-link>
-              <f7-link tab-link="#tab4"><f7-icon f7="info"></f7-icon>Overdue</f7-link>
+              <f7-link tab-link="#tab1" class="active"><f7-icon f7="timeline"></f7-icon>待機中</f7-link>
+              <f7-link tab-link="#tab2"><f7-icon f7="reload"></f7-icon>実施中</f7-link>
+              <f7-link tab-link="#tab3"><f7-icon f7="check"></f7-icon>終了</f7-link>
+              <f7-link tab-link="#tab4"><f7-icon f7="info"></f7-icon>期限オーバー</f7-link>
             </f7-toolbar>
           <f7-tabs>
       <f7-tab id="tab1" active>
@@ -41,19 +41,22 @@
         <f7-list-item>
          <div>
             <label for="">Tiêu đề: </label>
-            <f7-input name="title" type="text"/>
+             <f7-input name="title" v-model="title" v-validate="'required'" type="text"/>
+            <span v-show="errors.has('title')">{{ errors.first('title') }}</span>
          </div>
         </f7-list-item>
         <f7-list-item>
          <div>
             <label for="">Nội dung: </label>
-            <f7-input name="content" type="text"/>
+            <f7-input name="content" v-model="content" v-validate="'required'" type="text"/>
+            <span v-show="errors.has('content')">{{ errors.first('content') }}</span>
          </div>
         </f7-list-item>
         <f7-list-item>
          <div>
             <label for="">Lưu ý </label>
-            <f7-input name="note" type="text" />
+            <f7-input name="note" v-model="note" v-validate="'required'" type="text" />
+            <span v-show="errors.has('note')">{{ errors.first('note') }}</span>
          </div>
         </f7-list-item>
         <f7-list-item>
@@ -83,7 +86,9 @@ var myApp = new Framework7();
     data: function(){
       return{
         tasks: [],
-        now: Date.now()
+        title: '',
+        note: '',
+        content: ''
       }
     },
     methods: {
@@ -169,27 +174,35 @@ var myApp = new Framework7();
       },
       createTask(){
         var self = this;
-        var formData = myApp.formToData("#my-form");
-        this.$http.post(cf.serverURL + 'create-work-list',
-          {
-            user_id: localStorage.getItem('id'),
-            title: formData.title,
-            content: formData.content,
-            note: formData.note,
-            date_start: formData.start,
-            date_end: formData.end,
-            created_by: localStorage.getItem('id'),
-            token: localStorage.getItem('token')
+        this.$validator.validateAll().then(function(result){
+          if(result){
+            var formData = myApp.formToData("#my-form");
+            self.$http.post(cf.serverURL + 'create-work-list',
+              {
+                user_id: localStorage.getItem('id'),
+                title: formData.title,
+                content: formData.content,
+                note: formData.note,
+                date_start: formData.start,
+                date_end: formData.end,
+                created_by: localStorage.getItem('id'),
+                token: localStorage.getItem('token')
+              }
+            ).then(
+              function(res){
+                self.$f7.views.main.router.refreshPage();
+                myApp.closeModal('#demo-popup');
+                self.$f7.alert("Created Successfully","Create Task");
+              },
+              function(res){
+                console.log(res);
+              })
           }
-        ).then(
-          function(res){
-            self.$f7.views.main.router.refreshPage();
-            myApp.closeModal('#demo-popup');
-            self.$f7.alert("Created Successfully","Create Task");
-          },
-          function(res){
-            console.log(res);
-          })
+          else{
+             self.$f7.alert("Correct them all","Error Validated");
+            return false;
+          }
+        })
       }
     },
     mounted: function(){

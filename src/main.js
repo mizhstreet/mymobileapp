@@ -1,5 +1,5 @@
 import Vue from 'vue'
-
+import VeeValidate from 'vee-validate'
 // Import F7
 /* eslint-disable no-unused-vars */
 import Framework7 from 'framework7'
@@ -25,6 +25,7 @@ import App from './App'
 // Init F7 Vue Plugin
 Vue.use(Framework7Vue)
 Vue.use(VueResource)
+Vue.use(VeeValidate)
 Vue.http.options.emulateJSON = true
 // Vue.http.headers.common['Access-Control-Allow-Origin'] = 'http://xxx.xxx.xxx.xxx:94'
 /* eslint-disable no-new */

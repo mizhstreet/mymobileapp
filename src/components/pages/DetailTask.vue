@@ -1,47 +1,47 @@
 <template>
     <f7-page @page:afterback="back">
-      <f7-navbar title="Detail Task" back-link="Back" sliding>
+      <f7-navbar title="仕事詳細" back-link="Back" sliding>
       </f7-navbar>    
       <f7-list>
         <f7-list-item>
         <div>
-            <label for="">Tạo bởi: </label>
+            <label for="">作成者: </label>
             <f7-input id="created_by" type="text" :value="task.created_by" :readonly="true"/>
          </div>
         </f7-list-item>
         <f7-list-item>
          <div>
-            <label for="">Tiêu đề: </label>
+            <label for="">タイトル: </label>
             <f7-input id="title" type="text" :value="task.title" :readonly="task.status != 0 ? 'readonly' : false "/>
          </div>
         </f7-list-item>
         <f7-list-item>
          <div>
-            <label for="">Nội dung: </label>
+            <label for="">内容: </label>
             <f7-input id="content" type="text" :value="task.content" :readonly="task.status != 0 ? 'readonly' : false "/>
          </div>
         </f7-list-item>
         <f7-list-item>
          <div>
-            <label for="">Ghi chú </label>
+            <label for="">備考:</label>
             <f7-input id="note" type="text" :value="task.note" :readonly="task.status != 0 ? 'readonly' : false "/>
          </div>
         </f7-list-item>
         <f7-list-item>
          <div>
-            <label for="">Ngày bắt đầu </label>
+            <label for="">開始時間: </label>
             <f7-input id="start" type="text" :value="task.date_start" :readonly="task.status != 0 ? 'readonly' : false "/>
          </div>
         </f7-list-item>
         <f7-list-item>
          <div>
-            <label for="">Ngày kết thúc </label>
+            <label for="">終了時間: </label>
             <f7-input id="end" type="text" :value="task.date_end" :readonly="task.status != 0 ? 'readonly' : false "/>
          </div>
         </f7-list-item>
        <f7-buttons >
-                <f7-button v-if="task.status == 0" big fill class="button col-50" @click="confirmTask()" color="green">Confirm</f7-button>
-                <f7-button v-if="task.status == 0" big fill class="button col-50" @click="deleteTask()" color="red">Delete</f7-button>
+                <f7-button v-if="task.status == 0" big fill class="button col-50" @click="confirmTask()" color="green">確認</f7-button>
+                <f7-button v-if="task.status == 0" big fill class="button col-50" @click="deleteTask()" color="red">削除</f7-button>
             </f7-buttons>
       </f7-list>
 
@@ -61,8 +61,8 @@ import {cf} from './../../main.js';
     methods: {
         showConfirm(){
             var self = this;
-            self.$f7.confirm('Are you sure want to delete this?', 'Delete Task',function(){
-                self.$f7.alert('Deleted Successfully','Delete Task');
+            self.$f7.confirm('削除しますか?', '削除',function(){
+                self.$f7.alert('削除しました','削除');
             })
         },
         fetchTask(){
@@ -88,7 +88,7 @@ import {cf} from './../../main.js';
           .then(
             function(res){
                self.$f7.views.main.router.refreshPreviousPage();
-              self.$f7.alert('Confirmed Successfully','Confirm Task', function(){
+              self.$f7.alert('承認しました。','Confirm Task', function(){
                  self.$f7.views.main.router.back();
                
               });     
@@ -98,7 +98,7 @@ import {cf} from './../../main.js';
             }
           )
           }
-          else if (localStorage.getItem('type') == 2){
+          else if (localStorage.getItem('type') == 3){
             myApp.showPreloader();
             this.$http.post(cf.serverURL + 'create-work-list',{
               user_id: localStorage.getItem('id'), 
@@ -114,7 +114,7 @@ import {cf} from './../../main.js';
               function(res){
                 myApp.hidePreloader();
                 self.$f7.views.main.router.refreshPreviousPage();
-                self.$f7.alert('Sửa việc thành công','Sửa việc', function(){
+                self.$f7.alert('仕事内容を修正しました','Sửa việc', function(){
                  self.$f7.views.main.router.back();
                
                   });  
@@ -133,7 +133,7 @@ import {cf} from './../../main.js';
         },
         deleteTask(){
           var self = this;
-          this.$f7.confirm("Are you sure want to delete this","Delete", function(){
+          this.$f7.confirm("削除しますか。","削除", function(){
             self.$http.post(cf.serverURL + 'delete-work-list',{
               user_id: localStorage.getItem('id'),
               token: localStorage.getItem('token'),
@@ -142,7 +142,7 @@ import {cf} from './../../main.js';
               function(res){
                 console.log(res);
                 self.$f7.views.main.router.refreshPreviousPage();
-                self.$f7.alert('Confirmed Successfully','Confirm Task', function(){
+                self.$f7.alert('承認しました。','確認', function(){
                  self.$f7.views.main.router.back();              
               });
               },
