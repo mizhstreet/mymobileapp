@@ -14,66 +14,66 @@
           <f7-tabs>
       <f7-tab id="tab1" active>
         <f7-list>
-          <f7-list-item :link="'/detail-task/' + task.id" v-for="task in tasks" v-if="task.status == 0">{{task.title}}</f7-list-item>
+          <f7-list-item :key="task.id" :link="'/detail-task/' + task.id" v-for="task in tasks" v-if="task.status == 0">{{task.title}}</f7-list-item>
         </f7-list>
       </f7-tab>
       <f7-tab id="tab2">
         <f7-list>
-          <f7-list-item :link="'/detail-task/' + task.id" v-for="task in tasks" v-if="task.status == 1">{{task.title}}</f7-list-item>
+          <f7-list-item :key="task.id" :link="'/detail-task/' + task.id" v-for="task in tasks" v-if="task.status == 1">{{task.title}}</f7-list-item>
         </f7-list>
         </f7-list>
       </f7-tab>
       <f7-tab id="tab3">
         <f7-list>
-          <f7-list-item :link="'/detail-task/' + task.id" v-for="task in tasks" v-if="task.status == 2">{{task.title}}</f7-list-item>
+          <f7-list-item :key="task.id" :link="'/detail-task/' + task.id" v-for="task in tasks" v-if="task.status == 2">{{task.title}}</f7-list-item>
         </f7-list>
         </f7-list>
       </f7-tab>
       <f7-tab id="tab4">
         <f7-list>
-          <f7-list-item :link="'/detail-task/' + task.id" v-for="task in tasks" v-if="task.status !=2" :key="task.id">{{task.title}}</f7-list-item>
+          <f7-list-item :link="'/detail-task/' + task.id" v-for="task in tasks" v-if="task.status == 3" :key="task.id">{{task.title}}</f7-list-item>
         </f7-list>
         </f7-list>
       </f7-tab>
     </f7-tabs>
     <f7-popup id="demo-popup" no-navbar>
-         <f7-list form id="my-form">
+         <f7-list form id="my-form1">
         <f7-list-item>
          <div>
-            <label for="">Tiêu đề: </label>
+            <label for="">タイトル: </label>
              <f7-input name="title" v-model="title" v-validate="'required'" type="text"/>
             <span v-show="errors.has('title')">{{ errors.first('title') }}</span>
          </div>
         </f7-list-item>
         <f7-list-item>
          <div>
-            <label for="">Nội dung: </label>
+            <label for="">内容: </label>
             <f7-input name="content" v-model="content" v-validate="'required'" type="text"/>
             <span v-show="errors.has('content')">{{ errors.first('content') }}</span>
          </div>
         </f7-list-item>
         <f7-list-item>
          <div>
-            <label for="">Lưu ý </label>
+            <label for="">備考: </label>
             <f7-input name="note" v-model="note" v-validate="'required'" type="text" />
             <span v-show="errors.has('note')">{{ errors.first('note') }}</span>
          </div>
         </f7-list-item>
         <f7-list-item>
          <div>
-            <label for="">Ngày bắt đầu </label>
-            <f7-input name="start" type="text" placeholder="Date Time" readonly id="picker-date1"></f7-input>
+            <label for="">開始時間: </label>
+            <f7-input name="start" type="text" readonly id="picker-date1"></f7-input>
          </div>
         </f7-list-item>
         <f7-list-item>
          <div>
-            <label for="">Ngày kết thúc </label>
-            <f7-input name="end" type="text" placeholder="Date Time" readonly id="picker-date2"/>
+            <label for="">終了時間: </label>
+            <f7-input name="end" type="text" readonly id="picker-date2"/>
          </div>
         </f7-list-item>
         <f7-buttons >
-                <f7-button big fill class="button col-50" close-popup color="blue">Cancel</f7-button>
-                <f7-button big fill class="button col-50" @click="createTask()" color="green">Confirm</f7-button>
+                <f7-button big fill class="button col-50" close-popup color="blue">キャンセル</f7-button>
+                <f7-button big fill class="button col-50" @click="createTask()" color="green">確認</f7-button>
             </f7-buttons>
       </f7-list>
     </f7-popup>
@@ -81,6 +81,7 @@
   </template>
 <script>
 var myApp = new Framework7();
+var $$ = Dom7;
   import {cf} from './../../main.js';
   export default{
     data: function(){
@@ -94,10 +95,23 @@ var myApp = new Framework7();
     methods: {
       fetchTasks(){
         var self = this;
-        this.$http.post((cf.serverURL + 'list-work-list'),{user_id: localStorage.getItem('id'), token: localStorage.getItem('token'), worker_id: this.$route.params.id})
+        this.$http.post((cf.serverURL + 'list-work-list'),{
+          user_id: localStorage.getItem('id'), 
+          token: localStorage.getItem('token'), 
+          worker_id: this.$route.params.id,
+          page: 1
+        })
         .then(
           function(res){
-            this.tasks = res.body.results;
+            console.log(res);
+            $$.each(res.body.results,function(value, key){
+              var n = self.$moment(new Date());
+              var e = self.$moment(key.date_end);
+              if(key.status !=2 && e < n){
+                key.status = 3;
+              }
+            });
+            self.tasks = res.body.results;
           },
           function(res){
             alert(res);
@@ -126,14 +140,14 @@ var myApp = new Framework7();
          
             cols: [
                 // Months
+                {
+                    values: ('0 1 2 3 4 5 6 7 8 9 10 11').split(' '),
+                    displayValues: ('1 2 3 4 5 6 7 8 9 10 11 12').split(' '),
+                    textAlign: 'left'
+                },
                 // Days
                 {
                     values: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
-                },
-                {
-                    values: ('1 2 3 4 5 6 7 8 9 10 11 12').split(' '),
-                    displayValues: ('1 2 3 4 5 6 7 8 9 10 11 12').split(' '),
-                    textAlign: 'left'
                 },
                 // Years
                 {
@@ -176,10 +190,10 @@ var myApp = new Framework7();
         var self = this;
         this.$validator.validateAll().then(function(result){
           if(result){
-            var formData = myApp.formToData("#my-form");
+            var formData = myApp.formToData("#my-form1");
             self.$http.post(cf.serverURL + 'create-work-list',
               {
-                user_id: localStorage.getItem('id'),
+                user_id: self.$route.params.id,
                 title: formData.title,
                 content: formData.content,
                 note: formData.note,
@@ -191,8 +205,9 @@ var myApp = new Framework7();
             ).then(
               function(res){
                 self.$f7.views.main.router.refreshPage();
-                myApp.closeModal('#demo-popup');
+                myApp.closeModal();  
                 self.$f7.alert("Created Successfully","Create Task");
+                console.log(res);
               },
               function(res){
                 console.log(res);
@@ -205,8 +220,16 @@ var myApp = new Framework7();
         })
       }
     },
-    mounted: function(){
+    created: function(){
+      myApp.showPreloader();
       this.fetchTasks();
+    },
+    updated: function(){
+      myApp.hidePreloader();
+      this.showPicker(1);
+      this.showPicker(2);
+    },
+    mounted: function(){
       this.showPicker(1);
       this.showPicker(2);
     }

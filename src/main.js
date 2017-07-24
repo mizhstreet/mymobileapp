@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import VueMoment from 'vue-moment'
 import VeeValidate from 'vee-validate'
 // Import F7
 /* eslint-disable no-unused-vars */
@@ -16,7 +17,6 @@ import Framework7ThemeColors from 'framework7/dist/css/framework7.ios.colors.min
 // import Framework7ThemeColors from 'framework7/dist/css/framework7.material.colors.min.css'
 
 // Import App Custom Styles
-import AppStyles from './css/app.css'
 
 // Import Routes
 import Routes from './routes.js'
@@ -26,6 +26,7 @@ import App from './App'
 Vue.use(Framework7Vue)
 Vue.use(VueResource)
 Vue.use(VeeValidate)
+Vue.use(require('vue-moment'))
 Vue.http.options.emulateJSON = true
 // Vue.http.headers.common['Access-Control-Allow-Origin'] = 'http://xxx.xxx.xxx.xxx:94'
 /* eslint-disable no-new */

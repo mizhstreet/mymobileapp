@@ -30,6 +30,22 @@ export default[
     {
       path: '/timeline/',
       component: require('./components/pages/Timeline.vue')
+    },
+    {
+      path: '/help-request/',
+      component: require('./components/pages/HelpRequest.vue')
+    },
+    {
+      path: '/help/',
+      component: require('./components/pages/Help.vue')
+    },
+    {
+      path: '/help-detail/:id',
+      component: require('./components/pages/HelpDetail.vue')
+    },
+    {
+      path: '/waiting-task/',
+      component: require('./components/pages/WaitingTask.vue')
     }
 
  ]
